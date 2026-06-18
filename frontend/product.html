@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | BLUSH & BLOOM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="/index.html" class="logo">BLUSH<span>&</span>BLOOM</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html" class="nav-link">Home</a></li>
+          <li><a href="/shop.html" class="nav-link">Shop All</a></li>
+          <li><a href="/shop.html?category=Ethnic,Ethnic%20Casual" class="nav-link">Heritage</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" id="nav-auth-actions">
+        <a href="/login.html" class="nav-btn"><i class="far fa-user"></i></a>
+        <a href="/login.html" class="nav-btn"><i class="fas fa-shopping-bag"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail Section -->
+  <main class="container section" style="margin-top: 60px;">
+    <div class="product-detail-layout" id="product-detail-container">
+      <!-- Loaded dynamically -->
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 5rem;">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+        <p>Loading item details...</p>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem;">
+        <h2 class="serif-title" style="font-size: 2rem;">Customer Reviews</h2>
+        <span id="reviews-summary-count" style="color: var(--text-muted);">0 Reviews</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: start;">
+        <!-- Reviews List -->
+        <div id="reviews-list-container">
+          <p style="color: var(--text-muted);">No reviews written for this product yet.</p>
+        </div>
+
+        <!-- Write a Review Form -->
+        <div id="write-review-box" class="order-summary-card" style="position: static; padding: 2rem;">
+          <h3 class="serif-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">Share Your Experience</h3>
+          <form id="review-form">
+            <div class="form-grid" style="grid-template-columns: 1fr; gap: 1.25rem;">
+              <div class="form-group">
+                <label for="review-rating">Rating</label>
+                <select id="review-rating" required style="width: 100%; border: 1px solid var(--border-color); padding: 0.85rem; background-color: var(--bg-primary);">
+                  <option value="5">5 Stars - Perfect</option>
+                  <option value="4">4 Stars - Very Good</option>
+                  <option value="3">3 Stars - Good</option>
+                  <option value="2">2 Stars - Fair</option>
+                  <option value="1">1 Star - Poor</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="review-comment">Your Thoughts</label>
+                <textarea id="review-comment" rows="5" required placeholder="What did you love or dislike about this product? Tell us about the fabric and fit..."></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Submit Review</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0; display: flex; justify-content: space-between;">
+        <p>&copy; 2026 BLUSH & BLOOM. All rights reserved.</p>
+        <p>Sustainable Generational Elegance</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    let productData = null;
+    let selectedSize = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('id');
+
+      if (!productId) {
+        window.location.href = '/shop.html';
+        return;
+      }
+
+      // Hide review box if not logged in
+      const reviewBox = document.getElementById('write-review-box');
+      if (!window.Auth.isLoggedIn()) {
+        reviewBox.innerHTML = `
+          <h3 class="serif-title" style="font-size: 1.3rem; margin-bottom: 1rem;">Share Your Experience</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Please <a href="/login.html" style="color: var(--accent-blush); text-decoration: underline; font-weight:600;">Sign In</a> to write a review for this product.</p>
+        `;
+      }
+
+      await loadProductDetails(productId);
+
+      // Handle Review Submission
+      const reviewForm = document.getElementById('review-form');
+      if (reviewForm) {
+        reviewForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const rating = document.getElementById('review-rating').value;
+          const comment = document.getElementById('review-comment').value.trim();
+
+          try {
+            const response = await window.API.post(`/products/${productId}/review`, { rating, comment });
+            if (response.success) {
+              window.API.showToast('Thank you! Your review has been added.');
+              reviewForm.reset();
+              await loadProductDetails(productId); // Reload page details and reviews
+            }
+          } catch (err) {
+            console.error('Failed to submit review:', err);
+          }
+        });
+      }
+    });
+
+    async function loadProductDetails(productId) {
+      try {
+        const response = await window.API.get(`/products/${productId}`);
+        if (response.success && response.data) {
+          productData = response.data;
+          renderProduct(productData);
+          renderReviews(productData.reviews);
+        }
+      } catch (err) {
+        document.getElementById('product-detail-container').innerHTML = `
+          <p style="grid-column: 1/-1; text-align: center; color: var(--error);">Failed to load product details. Item ID may be invalid.</p>
+        `;
+      }
+    }
+
+    function renderProduct(prod) {
+      const container = document.getElementById('product-detail-container');
+      
+      const stars = Array(Math.round(prod.rating.average || 5)).fill('<i class="fas fa-star"></i>').join('');
+      const ratingCount = prod.rating.count || 0;
+      
+      // Sizes list
+      const sizesHTML = prod.sizes.map(size => {
+        return `<div class="size-chip" data-size="${size}" onclick="selectSizeChip('${size}')">${size}</div>`;
+      }).join('');
+
+      container.innerHTML = `
+        <!-- Left: Image Gallery -->
+        <div class="product-gallery">
+          <div class="main-image-box">
+            <img id="main-product-image" src="${prod.images[0]}" alt="${prod.name}">
+          </div>
+          <div class="thumbnail-row">
+            ${prod.images.map((img, i) => `
+              <div class="thumb-box ${i === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">
+                <img src="${img}" alt="Thumbnail ${i}">
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Right: Detail Info -->
+        <div class="product-detail-info">
+          <span class="product-brand" style="font-size: 0.85rem; margin-bottom: 0.5rem;">${prod.brand}</span>
+          <h1 class="product-detail-name">${prod.name}</h1>
+          
+          <div class="product-rating" style="font-size: 1rem; margin-bottom: 1.5rem;">
+            ${stars}
+            <span style="font-size: 0.9rem;">(${ratingCount} customer reviews)</span>
+          </div>
+
+          <p class="product-description">${prod.description}</p>
+
+          <!-- Spec Grid -->
+          <div class="product-meta-specs">
+            <div class="spec-item">
+              <span>Fabric</span>
+              <span>${prod.fabric || 'Premium Organic Knit'}</span>
+            </div>
+            <div class="spec-item">
+              <span>Occasion</span>
+              <span>${prod.occasion || 'Casual Luxury'}</span>
+            </div>
+            <div class="spec-item">
+              <span>Wash Care</span>
+              <span>${prod.washCare || 'Gentle Hand Wash'}</span>
+            </div>
+            <div class="spec-item">
+              <span>Age Group</span>
+              <span>${prod.ageGroup}</span>
+            </div>
+          </div>
+
+          <!-- Size Selector -->
+          <div class="size-select-section">
+            <div class="size-select-title">
+              <span>Select Size</span>
+              <a href="#" onclick="event.preventDefault(); alert('Standard Size Guide: Fits true to scale. Order your normal size.')">Size Guide</a>
+            </div>
+            <div class="size-chips">
+              ${sizesHTML}
+            </div>
+          </div>
+
+          <!-- Price and Actions -->
+          <div class="product-detail-price-box">
+            <span class="product-detail-price">₹${prod.price}</span>
+            ${prod.mrp > prod.price ? `<span class="product-detail-mrp">₹${prod.mrp}</span>` : ''}
+            ${prod.discount > 0 ? `<span class="product-detail-discount">${prod.discount}% Off</span>` : ''}
+          </div>
+
+          <div class="action-buttons-row">
+            <button class="btn btn-primary" onclick="handleAddToCart('${prod._id}')" style="padding: 1.1rem;">
+              <i class="fas fa-shopping-bag" style="margin-right: 0.75rem;"></i> Add To Cart
+            </button>
+            <button class="product-fav-btn" onclick="handleAddToWishlist('${prod._id}', this)" style="position: static; border: 1px solid var(--border-color); border-radius: 0; width: 52px; height: 52px; display: inline-flex;">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+
+          <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+            <span><i class="fas fa-check-circle" style="color: var(--accent-blush); margin-right: 0.5rem;"></i> Free shipping on orders above ₹1,000.</span>
+            <span><i class="fas fa-history" style="color: var(--accent-blush); margin-right: 0.5rem;"></i> Easy 7-day generational exchange.</span>
+          </div>
+
+        </div>
+      `;
+    }
+
+    window.changeMainImage = function(imgSrc, element) {
+      document.getElementById('main-product-image').src = imgSrc;
+      document.querySelectorAll('.thumb-box').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+    };
+
+    window.selectSizeChip = function(size) {
+      selectedSize = size;
+      document.querySelectorAll('.size-chip').forEach(el => {
+        if (el.getAttribute('data-size') === size) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    };
+
+    window.handleAddToCart = async function(productId) {
+      if (!window.Auth.isLoggedIn()) {
+        window.API.showToast('Please Sign In to add items to your cart.', 'error');
+        setTimeout(() => window.location.href = `/login.html?redirect=/product.html?id=${productId}`, 1500);
+        return;
+      }
+
+      if (!selectedSize) {
+        window.API.showToast('Please select a size first.', 'error');
+        return;
+      }
+
+      try {
+        const response = await window.API.post('/cart', {
+          product: productId,
+          quantity: 1,
+          size: selectedSize
+        });
+
+        if (response.success) {
+          window.API.showToast('Successfully added item to cart!');
+          window.Auth.updateCartBadgeCount();
+        }
+      } catch (err) {
+        console.error('Failed to add item to cart:', err);
+      }
+    };
+
+    window.handleAddToWishlist = async function(productId, btnElement) {
+      if (!window.Auth.isLoggedIn()) {
+        window.API.showToast('Please Sign In to manage your wishlist.', 'error');
+        return;
+      }
+
+      try {
+        const response = await window.API.post(`/wishlist/${productId}`);
+        if (response.success) {
+          window.API.showToast('Successfully added to wishlist!');
+          btnElement.style.color = 'var(--accent-burgundy)';
+          btnElement.innerHTML = `<i class="fas fa-heart"></i>`;
+        }
+      } catch (err) {
+        // Already in wishlist or error
+      }
+    };
+
+    function renderReviews(reviews = []) {
+      const summaryCount = document.getElementById('reviews-summary-count');
+      const listContainer = document.getElementById('reviews-list-container');
+
+      summaryCount.textContent = `${reviews.length} Review${reviews.length !== 1 ? 's' : ''}`;
+
+      if (reviews.length === 0) {
+        listContainer.innerHTML = `<p style="color: var(--text-muted); padding: 2rem 0;">No reviews written for this product yet. Be the first to share your thoughts!</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = reviews.map(rev => {
+        const stars = Array(rev.rating).fill('<i class="fas fa-star"></i>').join('') + 
+                      Array(5 - rev.rating).fill('<i class="far fa-star"></i>').join('');
+        const dateStr = new Date(rev.date).toLocaleDateString('en-IN', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        
+        // Show age and city details if they exist to add MERN store custom features
+        const reviewerDetails = [];
+        if (rev.reviewerAge) reviewerDetails.push(`Age: ${rev.reviewerAge}`);
+        if (rev.reviewerCity) reviewerDetails.push(`City: ${rev.reviewerCity}`);
+        const metaDetailText = reviewerDetails.length > 0 ? ` (${reviewerDetails.join(' | ')})` : '';
+
+        return `
+          <div class="review-item animate-fade-in-up">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <span class="reviewer-name">${rev.reviewerName}${metaDetailText}</span>
+                <span class="review-date">Reviewed on ${dateStr}</span>
+              </div>
+              <div class="review-stars">
+                ${stars}
+              </div>
+            </div>
+            <p class="review-comment">"${rev.comment}"</p>
+            <div class="review-feedback">
+              <span>Was this review helpful?</span>
+              <button onclick="alert('Thank you for your feedback!')"><i class="far fa-thumbs-up"></i> Helpful (${rev.helpful || 0})</button>
+              <button onclick="alert('Thank you for your feedback!')"><i class="far fa-thumbs-down"></i> Not Helpful (${rev.notHelpful || 0})</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

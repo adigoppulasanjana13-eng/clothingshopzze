@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | BLUSH & BLOOM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 3rem;
+      margin-top: 40px;
+      align-items: start;
+    }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .metric-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .metric-value {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent-burgundy);
+    }
+    .admin-tab-content {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      min-height: 500px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem;
+      text-align: left;
+    }
+    th {
+      background-color: var(--bg-primary);
+      font-weight: 600;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    .admin-control-select {
+      border: 1px solid var(--border-color);
+      padding: 0.4rem;
+      background-color: var(--bg-secondary);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .admin-form-box {
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      background-color: var(--bg-primary);
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="/index.html" class="logo">BLUSH<span>&</span>BLOOM</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html" class="nav-link">Home</a></li>
+          <li><a href="/shop.html" class="nav-link">Shop All</a></li>
+          <li><a href="/admin.html" class="nav-link active" style="color: var(--accent-burgundy); font-weight:700;">Admin</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" id="nav-auth-actions">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Main -->
+  <main class="container section" style="margin-top: 60px;">
+    <h1 class="serif-title" style="font-size: 2.5rem; margin-bottom: 1rem;">Admin Control Portal</h1>
+    <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Manage store products, process pending user order shipments, and configure active coupons.</p>
+
+    <!-- Metrics Row -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <span class="metric-label">Total Revenue</span>
+        <span class="metric-value" id="sales-revenue">₹0</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Total Orders</span>
+        <span class="metric-value" id="total-orders-count">0</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Active Users</span>
+        <span class="metric-value" id="total-users-count">0</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Coupons Configured</span>
+        <span class="metric-value" id="active-coupons-count">0</span>
+      </div>
+    </div>
+
+    <!-- Admin Layout -->
+    <div class="admin-layout">
+      
+      <!-- Left sidebar -->
+      <aside class="profile-tabs-sidebar">
+        <button class="profile-tab-btn active" onclick="switchAdminTab('orders', this)">
+          <i class="fas fa-truck"></i> Manage Orders
+        </button>
+        <button class="profile-tab-btn" onclick="switchAdminTab('products', this)">
+          <i class="fas fa-boxes"></i> Manage Catalog
+        </button>
+        <button class="profile-tab-btn" onclick="switchAdminTab('coupons', this)">
+          <i class="fas fa-tags"></i> Manage Coupons
+        </button>
+      </aside>
+
+      <!-- Content panel -->
+      <section class="admin-tab-content" id="admin-panel">
+        <!-- Dynamically loaded -->
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0; display: flex; justify-content: space-between;">
+        <p>&copy; 2026 BLUSH & BLOOM. All rights reserved.</p>
+        <p>Enterprise Console Mode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    let ordersList = [];
+    let productsList = [];
+    let couponsList = [];
+    let usersList = [];
+    let activeTab = 'orders';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Secure check
+      if (!window.Auth.isLoggedIn() || !window.Auth.isAdmin()) {
+        window.API.showToast('Access denied. Admin authorization required.', 'error');
+        setTimeout(() => window.location.href = '/index.html', 1500);
+        return;
+      }
+
+      await loadDashboardMetrics();
+      renderActiveTab();
+    });
+
+    async function loadDashboardMetrics() {
+      try {
+        const [ordersRes, usersRes, couponsRes, productsRes] = await Promise.all([
+          window.API.get('/orders'),
+          window.API.get('/users'),
+          window.API.get('/coupons'),
+          window.API.get('/products?limit=1000') // fetch all
+        ]);
+
+        if (ordersRes.success) ordersList = ordersRes.data;
+        if (usersRes.success) usersList = usersRes.data;
+        if (couponsRes.success) couponsList = couponsRes.data;
+        if (productsRes.success && productsRes.data) productsList = productsRes.data.products || [];
+
+        calculateAndRenderMetrics();
+      } catch (err) {
+        console.error('Failed to load metrics data:', err);
+      }
+    }
+
+    function calculateAndRenderMetrics() {
+      const activeOrders = ordersList.filter(o => o.orderStatus !== 'Cancelled');
+      const revenue = activeOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+      
+      document.getElementById('sales-revenue').textContent = `₹${revenue}`;
+      document.getElementById('total-orders-count').textContent = ordersList.length;
+      document.getElementById('total-users-count').textContent = usersList.length;
+      document.getElementById('active-coupons-count').textContent = couponsList.length;
+    }
+
+    window.switchAdminTab = function(tab, btnElement) {
+      activeTab = tab;
+      document.querySelectorAll('.profile-tab-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      renderActiveTab();
+    };
+
+    async function renderActiveTab() {
+      const panel = document.getElementById('admin-panel');
+      
+      if (activeTab === 'orders') {
+        panel.innerHTML = `
+          <h2 class="profile-title">Manage Orders</h2>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Order Date</th>
+                  <th>Total</th>
+                  <th>Payment Status</th>
+                  <th>Order Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${ordersList.length === 0 ? `
+                  <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No orders placed yet.</td></tr>
+                ` : ordersList.map(ord => {
+                  const customerName = ord.user ? ord.user.name : 'Guest Customer';
+                  const customerEmail = ord.user ? ord.user.email : '';
+                  const orderDate = new Date(ord.createdAt).toLocaleDateString('en-IN', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                  });
+
+                  return `
+                    <tr>
+                      <td style="font-weight:600; font-size:0.8rem;">${ord._id}</td>
+                      <td>
+                        <strong>${customerName}</strong><br>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">${customerEmail}</span>
+                      </td>
+                      <td>${orderDate}</td>
+                      <td style="font-weight:700;">₹${ord.totalAmount}</td>
+                      <td>
+                        <select class="admin-control-select" onchange="updateOrderStatus('${ord._id}', this.value, null)">
+                          <option value="Pending" ${ord.paymentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                          <option value="Paid" ${ord.paymentStatus === 'Paid' ? 'selected' : ''}>Paid</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select class="admin-control-select" onchange="updateOrderStatus('${ord._id}', null, this.value)">
+                          <option value="Placed" ${ord.orderStatus === 'Placed' ? 'selected' : ''}>Placed</option>
+                          <option value="Shipped" ${ord.orderStatus === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                          <option value="Delivered" ${ord.orderStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                          <option value="Cancelled" ${ord.orderStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } 
+      
+      else if (activeTab === 'products') {
+        panel.innerHTML = `
+          <h2 class="profile-title">Manage Product Catalog</h2>
+          
+          <div class="admin-form-box">
+            <h3 class="serif-title" style="font-size:1.2rem; margin-bottom:1.5rem;">Add New Product</h3>
+            <form id="add-product-form" onsubmit="handleCreateProduct(event)">
+              <div class="form-grid" style="grid-template-columns: repeat(2, 1fr); gap:1rem;">
+                <div class="form-group">
+                  <label for="prodName">Product Title</label>
+                  <input type="text" id="prodName" required placeholder="e.g. Linen Spring Coat">
+                </div>
+                <div class="form-group">
+                  <label for="prodBrand">Brand</label>
+                  <input type="text" id="prodBrand" required value="BLUSH & BLOOM">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                  <label for="prodDesc">Detailed Description</label>
+                  <textarea id="prodDesc" rows="3" required placeholder="Provide design, fabric details..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="prodPrice">Price (Selling Price)</label>
+                  <input type="number" id="prodPrice" required placeholder="e.g. 1499">
+                </div>
+                <div class="form-group">
+                  <label for="prodMrp">MRP (Maximum Retail Price)</label>
+                  <input type="number" id="prodMrp" required placeholder="e.g. 1999">
+                </div>
+                <div class="form-group">
+                  <label for="prodCategory">Category</label>
+                  <select id="prodCategory" style="width: 100%; border: 1px solid var(--border-color); padding: 0.85rem; background-color: var(--bg-primary);">
+                    <option value="Dresses">Dresses</option>
+                    <option value="Tops">Tops</option>
+                    <option value="Bottoms">Bottoms</option>
+                    <option value="Outerwear">Outerwear</option>
+                    <option value="Ethnic">Ethnic</option>
+                    <option value="Rompers">Rompers</option>
+                    <option value="Sets">Sets</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="prodAge">Age Group Category</label>
+                  <select id="prodAge" style="width: 100%; border: 1px solid var(--border-color); padding: 0.85rem; background-color: var(--bg-primary);">
+                    <option value="Little Blooms">Little Blooms (0-6Y)</option>
+                    <option value="Tween Style">Tween Style (7-12Y)</option>
+                    <option value="Teen Edit">Teen Edit (13-17Y)</option>
+                    <option value="Young Women">Young Women (18-25Y)</option>
+                    <option value="Modern Women">Modern Women (26-35Y)</option>
+                    <option value="Elegant Women">Elegant Women (36-50Y)</option>
+                    <option value="Timeless Grace">Timeless Grace (50Y+)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="prodMinAge">Min Age (Years)</label>
+                  <input type="number" id="prodMinAge" required value="18">
+                </div>
+                <div class="form-group">
+                  <label for="prodMaxAge">Max Age (Years)</label>
+                  <input type="number" id="prodMaxAge" required value="25">
+                </div>
+                <div class="form-group">
+                  <label for="prodStock">Initial Stock Qty</label>
+                  <input type="number" id="prodStock" required value="20">
+                </div>
+                <div class="form-group">
+                  <label for="prodSizes">Available Sizes (Comma-separated)</label>
+                  <input type="text" id="prodSizes" required value="S, M, L, XL">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                  <label for="prodImage">Image URL</label>
+                  <input type="text" id="prodImage" required value="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80">
+                </div>
+                <div class="form-group">
+                  <label for="prodFabric">Fabric Type</label>
+                  <input type="text" id="prodFabric" value="100% Organic Flax Linen">
+                </div>
+                <div class="form-group">
+                  <label for="prodOccasion">Occasion</label>
+                  <input type="text" id="prodOccasion" value="Casual/Resortwear">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-accent" style="margin-top: 1.5rem; padding: 0.75rem 2rem; font-size: 0.85rem;">Create Product</button>
+            </form>
+          </div>
+
+          <h3 class="serif-title" style="font-size:1.3rem; margin-bottom:1rem;">Existing Catalog items</h3>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Age Group</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${productsList.map(prod => `
+                  <tr id="prod-row-${prod._id}">
+                    <td>
+                      <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <img src="${prod.images[0]}" alt="${prod.name}" style="width:40px; height:50px; object-fit:cover;">
+                        <div>
+                          <strong>${prod.name}</strong><br>
+                          <span style="font-size:0.75rem; color:var(--text-muted);">${prod.brand}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>${prod.category}</td>
+                    <td>${prod.ageGroup}</td>
+                    <td style="font-weight:600;">₹${prod.price}</td>
+                    <td>${prod.stock}</td>
+                    <td>
+                      <button onclick="deleteProduct('${prod._id}')" style="color:var(--error); font-weight:600; font-size:0.8rem;"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } 
+      
+      else if (activeTab === 'coupons') {
+        panel.innerHTML = `
+          <h2 class="profile-title">Manage Promotional Coupons</h2>
+          
+          <div class="admin-form-box">
+            <h3 class="serif-title" style="font-size:1.2rem; margin-bottom:1.5rem;">Add New Coupon Code</h3>
+            <form id="add-coupon-form" onsubmit="handleCreateCoupon(event)">
+              <div class="form-grid" style="grid-template-columns: repeat(2, 1fr); gap:1rem;">
+                <div class="form-group">
+                  <label for="couponCode">Coupon Code (Uppercase)</label>
+                  <input type="text" id="couponCode" required placeholder="e.g. SUMMER25">
+                </div>
+                <div class="form-group">
+                  <label for="couponDiscount">Discount Value</label>
+                  <input type="number" id="couponDiscount" required placeholder="e.g. 25 or 300">
+                </div>
+                <div class="form-group">
+                  <label for="couponType">Discount Type</label>
+                  <select id="couponType" style="width: 100%; border: 1px solid var(--border-color); padding: 0.85rem; background-color: var(--bg-primary);">
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="flat">Flat Amount (₹)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="couponMinOrder">Minimum Order Amount (₹)</label>
+                  <input type="number" id="couponMinOrder" required value="500">
+                </div>
+                <div class="form-group">
+                  <label for="couponMaxUses">Maximum Usages Limit</label>
+                  <input type="number" id="couponMaxUses" required value="100">
+                </div>
+                <div class="form-group">
+                  <label for="couponExpiry">Expiry Date</label>
+                  <input type="date" id="couponExpiry" required value="2030-12-31">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-accent" style="margin-top: 1.5rem; padding: 0.75rem 2rem; font-size: 0.85rem;">Create Coupon</button>
+            </form>
+          </div>
+
+          <h3 class="serif-title" style="font-size:1.3rem; margin-bottom:1rem;">Active Promotions</h3>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Discount Details</th>
+                  <th>Min Order</th>
+                  <th>Uses Count</th>
+                  <th>Expires On</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${couponsList.map(c => {
+                  const discDisplay = c.type === 'percentage' ? `${c.discount}% Off` : `₹${c.discount} Off`;
+                  const expDate = new Date(c.expiry).toLocaleDateString('en-IN', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                  });
+                  return `
+                    <tr>
+                      <td style="font-weight:700; font-size:0.95rem; color:var(--accent-burgundy);">${c.code}</td>
+                      <td>${discDisplay}</td>
+                      <td>₹${c.minOrder}</td>
+                      <td>${c.usedCount} / ${c.maxUses}</td>
+                      <td>${expDate}</td>
+                      <td>
+                        <span style="font-weight:600; color: ${c.isActive ? 'var(--success)' : 'var(--error)'};">
+                          ${c.isActive ? 'ACTIVE' : 'EXPIRED'}
+                        </span>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
+
+    window.updateOrderStatus = async function(orderId, payStatus, ordStatus) {
+      const payload = {};
+      if (payStatus) payload.paymentStatus = payStatus;
+      if (ordStatus) payload.orderStatus = ordStatus;
+
+      try {
+        const response = await window.API.put(`/orders/${orderId}/status`, payload);
+        if (response.success) {
+          window.API.showToast('Order status updated successfully!');
+          // Reload
+          await loadDashboardMetrics();
+          renderActiveTab();
+        }
+      } catch (err) {
+        console.error('Failed to update order:', err);
+      }
+    };
+
+    window.deleteProduct = async function(productId) {
+      if (!confirm('Are you sure you want to delete this product from the catalog?')) return;
+      try {
+        const response = await window.API.delete(`/products/${productId}`);
+        if (response.success) {
+          window.API.showToast('Product successfully deleted.');
+          await loadDashboardMetrics();
+          renderActiveTab();
+        }
+      } catch (err) {
+        console.error('Failed to delete product:', err);
+      }
+    };
+
+    window.handleCreateProduct = async function(e) {
+      e.preventDefault();
+
+      const newProduct = {
+        name: document.getElementById('prodName').value.trim(),
+        brand: document.getElementById('prodBrand').value.trim(),
+        description: document.getElementById('prodDesc').value.trim(),
+        price: Number(document.getElementById('prodPrice').value),
+        mrp: Number(document.getElementById('prodMrp').value),
+        category: document.getElementById('prodCategory').value,
+        ageGroup: document.getElementById('prodAge').value,
+        ageMin: Number(document.getElementById('prodMinAge').value),
+        ageMax: Number(document.getElementById('prodMaxAge').value),
+        stock: Number(document.getElementById('prodStock').value),
+        sizes: document.getElementById('prodSizes').value.split(',').map(s => s.trim()),
+        images: [document.getElementById('prodImage').value.trim()],
+        fabric: document.getElementById('prodFabric').value.trim(),
+        occasion: document.getElementById('prodOccasion').value.trim()
+      };
+
+      try {
+        const response = await window.API.post('/products', newProduct);
+        if (response.success) {
+          window.API.showToast('Product successfully created and added to catalog!');
+          document.getElementById('add-product-form').reset();
+          await loadDashboardMetrics();
+          renderActiveTab();
+        }
+      } catch (err) {
+        console.error('Failed to create product:', err);
+      }
+    };
+
+    window.handleCreateCoupon = async function(e) {
+      e.preventDefault();
+
+      const newCoupon = {
+        code: document.getElementById('couponCode').value.trim().toUpperCase(),
+        discount: Number(document.getElementById('couponDiscount').value),
+        type: document.getElementById('couponType').value,
+        minOrder: Number(document.getElementById('couponMinOrder').value),
+        maxUses: Number(document.getElementById('couponMaxUses').value),
+        expiry: new Date(document.getElementById('couponExpiry').value)
+      };
+
+      try {
+        const response = await window.API.post('/coupons', newCoupon);
+        if (response.success) {
+          window.API.showToast('Promo coupon created successfully!');
+          document.getElementById('add-coupon-form').reset();
+          await loadDashboardMetrics();
+          renderActiveTab();
+        }
+      } catch (err) {
+        console.error('Failed to create coupon:', err);
+      }
+    };
+  </script>
+</body>
+</html>

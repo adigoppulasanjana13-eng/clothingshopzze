@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | BLUSH & BLOOM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="/index.html" class="logo">BLUSH<span>&</span>BLOOM</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html" class="nav-link">Home</a></li>
+          <li><a href="/shop.html" class="nav-link">Shop All</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" id="nav-auth-actions">
+        <a href="/login.html" class="nav-btn active"><i class="far fa-user"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form Box -->
+  <main class="auth-page-container">
+    <div class="auth-header">
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Sign in to access your profile, cart, and orders.</p>
+    </div>
+    
+    <form id="login-form">
+      <div class="form-grid" style="grid-template-columns: 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required placeholder="Enter password">
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem;">Sign In</button>
+    </form>
+    
+    <div class="auth-footer">
+      <p>New to BLUSH & BLOOM? <a href="/register.html">Create an Account</a></p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Redirect if already logged in
+      if (window.Auth.isLoggedIn()) {
+        window.location.href = window.Auth.isAdmin() ? '/admin.html' : '/profile.html';
+        return;
+      }
+
+      const form = document.getElementById('login-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        
+        await window.Auth.login(email, password);
+      });
+    });
+  </script>
+</body>
+</html>

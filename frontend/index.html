@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLUSH & BLOOM | Editorial Fashion E-Store</title>
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Premium Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="/index.html" class="logo">BLUSH<span>&</span>BLOOM</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html" class="nav-link active">Home</a></li>
+          <li><a href="/shop.html" class="nav-link">Shop All</a></li>
+          <li><a href="/shop.html?category=Ethnic,Ethnic%20Casual" class="nav-link">Heritage</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" id="nav-auth-actions">
+        <!-- Loaded dynamically via auth.js -->
+        <a href="/login.html" class="nav-btn"><i class="far fa-user"></i></a>
+        <a href="/login.html" class="nav-btn"><i class="fas fa-shopping-bag"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Editorial Hero Banner -->
+  <section class="hero" style="background-image: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80');">
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-tagline">Sartorial Storytelling</span>
+        <h1 class="hero-title serif-title">Fashion for Every Generation</h1>
+        <p class="hero-desc">Discover curated luxury fashion crafted from premium organic fabrics, celebrating style and grace across all age groups.</p>
+        <div style="display: flex; gap: 1rem;">
+          <a href="/shop.html" class="btn btn-accent">Explore Catalog</a>
+          <a href="#categories" class="btn btn-secondary" style="color: var(--white); border-color: var(--white);">Shop by Age</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Editorial Manifesto -->
+  <section class="section" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="container" style="max-width: 800px; text-align: center;">
+      <h2 class="serif-title" style="font-size: 2.25rem; font-style: italic; margin-bottom: 1.5rem; color: var(--accent-burgundy);">"Style is a language that details the story of who you are, without requiring words."</h2>
+      <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.8;">At BLUSH & BLOOM, we reject ephemeral fast-fashion trends. We design classic garments with natural organic flax, premium linen, and pure Kashmiri pashmina, creating long-lasting heirlooms. From the first soft romper of childhood to the timeless linen shirt of maturity, we accompany your journey.</p>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="section" id="categories">
+    <div class="container">
+      <h2 class="section-title">Shop by Generational Age Group</h2>
+      <div class="categories-grid">
+        <!-- Little Blooms -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Little%20Blooms'">
+          <img src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=600&q=80" alt="Little Blooms" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Little Blooms</h3>
+            <span class="category-subtitle">Ages 0 to 6</span>
+          </div>
+        </div>
+        <!-- Tween Style -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Tween%20Style'">
+          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80" alt="Tween Style" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Tween Style</h3>
+            <span class="category-subtitle">Ages 7 to 12</span>
+          </div>
+        </div>
+        <!-- Teen Edit -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Teen%20Edit'">
+          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80" alt="Teen Edit" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Teen Edit</h3>
+            <span class="category-subtitle">Ages 13 to 17</span>
+          </div>
+        </div>
+        <!-- Young Women -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Young%20Women'">
+          <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=600&q=80" alt="Young Women" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Young Women</h3>
+            <span class="category-subtitle">Ages 18 to 25</span>
+          </div>
+        </div>
+        <!-- Modern Women -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Modern%20Women'">
+          <img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=600&q=80" alt="Modern Women" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Modern & Professional</h3>
+            <span class="category-subtitle">Ages 26 to 35</span>
+          </div>
+        </div>
+        <!-- Elegant Women -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Elegant%20Women'">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" alt="Elegant Women" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Elegant Sophistication</h3>
+            <span class="category-subtitle">Ages 36 to 50</span>
+          </div>
+        </div>
+        <!-- Timeless Grace -->
+        <div class="category-card animate-fade-in-up" onclick="window.location.href='/shop.html?ageGroup=Timeless%20Grace'">
+          <img src="https://images.unsplash.com/photo-1552664688-cf412ec27db2?auto=format&fit=crop&w=600&q=80" alt="Timeless Grace" class="category-img">
+          <div class="category-overlay">
+            <h3 class="category-title">Timeless Grace</h3>
+            <span class="category-subtitle">Ages 50+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="section" style="background-color: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">The Editorial Favorites</h2>
+      <div id="featured-products" class="products-grid">
+        <!-- Loaded dynamically via script -->
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">
+          <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+          <p>Curating collection...</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 4rem;">
+        <a href="/shop.html?sort=Top%20Rated" class="btn btn-primary">View Top Rated Products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-about">
+          <span class="footer-logo">BLUSH<span>&</span>BLOOM</span>
+          <p class="footer-about-text">A multi-generational editorial clothing store, dedicated to premium, sustainable, and organic fashion.</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Collections</h4>
+          <ul class="footer-links">
+            <li><a href="/shop.html?ageGroup=Little%20Blooms" class="footer-link">Little Blooms (0-6Y)</a></li>
+            <li><a href="/shop.html?ageGroup=Teen%20Edit" class="footer-link">Teen Edit (13-17Y)</a></li>
+            <li><a href="/shop.html?ageGroup=Young%20Women" class="footer-link">Young Women (18-25Y)</a></li>
+            <li><a href="/shop.html?ageGroup=Timeless%20Grace" class="footer-link">Timeless Grace (50Y+)</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Customer Care</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Shipping & Returns</a></li>
+            <li><a href="#" class="footer-link">Fabric & Wash Guide</a></li>
+            <li><a href="#" class="footer-link">Size Calculator</a></li>
+            <li><a href="#" class="footer-link">Contact Support</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Our Manifesto</a></li>
+            <li><a href="#" class="footer-link">Sartorial Journal</a></li>
+            <li><a href="#" class="footer-link">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 BLUSH & BLOOM. All rights reserved.</p>
+        <p>Crafted for sustainable luxury.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetch featured products (limit to 4)
+        const response = await window.API.get('/products');
+        if (response.success && response.data && response.data.products) {
+          const container = document.getElementById('featured-products');
+          // Filter to show products where isFeatured is true
+          const featured = response.data.products.filter(p => p.isFeatured).slice(0, 4);
+          
+          if (featured.length === 0) {
+            container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">No featured products available.</p>`;
+            return;
+          }
+
+          container.innerHTML = featured.map(prod => {
+            const stars = Array(Math.round(prod.rating.average || 5)).fill('<i class="fas fa-star"></i>').join('');
+            const ratingCount = prod.rating.count || 0;
+            return `
+              <div class="product-card animate-fade-in-up" onclick="window.location.href='/product.html?id=${prod._id}'">
+                <div class="product-image-container">
+                  ${prod.isSale ? '<div class="product-badge sale">Sale</div>' : prod.isFeatured ? '<div class="product-badge">Featured</div>' : ''}
+                  <img src="${prod.images[0]}" alt="${prod.name}" class="product-img">
+                  <img src="${prod.hoverImage || prod.images[0]}" alt="${prod.name}" class="product-img-hover">
+                </div>
+                <div class="product-info">
+                  <span class="product-brand">${prod.brand}</span>
+                  <h3 class="product-name">${prod.name}</h3>
+                  <div class="product-rating">
+                    ${stars}
+                    <span>(${ratingCount})</span>
+                  </div>
+                  <div class="product-footer">
+                    <div class="product-price-box">
+                      <span class="product-price">₹${prod.price}</span>
+                      ${prod.mrp > prod.price ? `<span class="product-mrp">₹${prod.mrp}</span>` : ''}
+                      ${prod.discount > 0 ? `<span class="product-discount">${prod.discount}% Off</span>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load featured products:', err);
+      }
+    });
+  </script>
+</body>
+</html>

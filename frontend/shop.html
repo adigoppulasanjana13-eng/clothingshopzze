@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Collection | BLUSH & BLOOM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="/index.html" class="logo">BLUSH<span>&</span>BLOOM</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html" class="nav-link">Home</a></li>
+          <li><a href="/shop.html" class="nav-link active">Shop All</a></li>
+          <li><a href="/shop.html?category=Ethnic,Ethnic%20Casual" class="nav-link">Heritage</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" id="nav-auth-actions">
+        <a href="/login.html" class="nav-btn"><i class="far fa-user"></i></a>
+        <a href="/login.html" class="nav-btn"><i class="fas fa-shopping-bag"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Shop Main Container -->
+  <main class="container section" style="margin-top: 60px;">
+    <div class="shop-layout">
+      
+      <!-- Filters Sidebar -->
+      <aside class="filters-sidebar">
+        <!-- Age Group Filter -->
+        <div class="filter-group">
+          <h3 class="filter-title">Age Group</h3>
+          <div class="filter-options" id="filter-ageGroup">
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Little Blooms"> Little Blooms (0-6)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Tween Style"> Tween Style (7-12)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Teen Edit"> Teen Edit (13-17)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Young Women"> Young Women (18-25)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Modern Women"> Modern Women (26-35)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Elegant Women"> Elegant Women (36-50)
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Timeless Grace"> Timeless Grace (50+)
+            </label>
+          </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-group">
+          <h3 class="filter-title">Category</h3>
+          <div class="filter-options" id="filter-category">
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Dresses"> Dresses
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Rompers"> Rompers
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Sets"> Sets
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Shirts"> Shirts
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Bottoms"> Bottoms
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Tops"> Tops
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Outerwear"> Outerwear
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" value="Ethnic"> Ethnic / Heritage
+            </label>
+          </div>
+        </div>
+
+        <!-- Sizes Filter -->
+        <div class="filter-group">
+          <h3 class="filter-title">Sizes</h3>
+          <div class="size-grid-options" id="filter-sizes">
+            <div class="size-btn-option" data-size="XS">XS</div>
+            <div class="size-btn-option" data-size="S">S</div>
+            <div class="size-btn-option" data-size="M">M</div>
+            <div class="size-btn-option" data-size="L">L</div>
+            <div class="size-btn-option" data-size="XL">XL</div>
+            <div class="size-btn-option" data-size="2XL">2XL</div>
+            <div class="size-btn-option" data-size="3XL">3XL</div>
+            <div class="size-btn-option" data-size="Free Size">Free</div>
+          </div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <h3 class="filter-title">Price Range</h3>
+          <div class="filter-options" id="filter-price">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="priceRange" value="all" checked> All Prices
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="priceRange" value="0-1000"> Under ₹1,000
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="priceRange" value="1000-2000"> ₹1,000 - ₹2,000
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="priceRange" value="2000-3000"> ₹2,000 - ₹3,000
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="priceRange" value="3000-99999"> Over ₹3,000
+            </label>
+          </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-group">
+          <h3 class="filter-title">Customer Rating</h3>
+          <div class="filter-options" id="filter-rating">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="ratingFilter" value="all" checked> All Ratings
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="ratingFilter" value="4+"> 4★ & above
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="ratingFilter" value="3+"> 3★ & above
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Catalog Display -->
+      <section>
+        <!-- Top controls -->
+        <div class="shop-controls">
+          <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search products...">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+          </div>
+          
+          <div class="sort-select-box">
+            <span>Sort By:</span>
+            <select id="sort-select">
+              <option value="New Arrivals">New Arrivals</option>
+              <option value="Price: Low to High">Price: Low to High</option>
+              <option value="Price: High to Low">Price: High to Low</option>
+              <option value="Top Rated">Top Rated</option>
+              <option value="Most Popular">Most Popular</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="shop-products-grid" class="products-grid">
+          <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="shop-pagination" class="pagination">
+          <!-- Loaded dynamically -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0; display: flex; justify-content: space-between;">
+        <p>&copy; 2026 BLUSH & BLOOM. All rights reserved.</p>
+        <p>Premium Sustainable Fashion</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/shop.js"></script>
+</body>
+</html>
