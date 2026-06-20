@@ -5,7 +5,7 @@ BLUSH & BLOOM (Shopez) is a premium, multi-generational editorial clothing e-com
 Built using the MERN stack and optimized for serverless hosting on Vercel, it features a complete shopping flow from product discovery to checkout.
 
 ## 🚀 Live URL
-Access the live deployment here: **[BLUSH & BLOOM Live Site](https://shopez-lovat.vercel.app)**
+Access the live deployment here: **[BLUSH & BLOOM Live Site](https://clothingshopzze.vercel.app)**
 
 ---
 
