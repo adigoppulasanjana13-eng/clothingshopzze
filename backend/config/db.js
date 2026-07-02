@@ -10,6 +10,8 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 1500
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    // Check and seed database if it is empty
+    await checkAndSeedData();
   } catch (error) {
     console.log(`Local MongoDB connection failed: ${error.message}`);
     if (process.env.VERCEL) {
