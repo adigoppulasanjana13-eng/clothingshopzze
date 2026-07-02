@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: shopez-bloom
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        value: mongodb://127.0.0.1:27017/blushandbloom
+      - key: JWT_SECRET
+        value: blushandbloom_jwt_2025_secure
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: NODE_ENV
+        value: production
