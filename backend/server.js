@@ -8,9 +8,17 @@ const errorHandler = require('./middlewares/errorHandler');
 // Load env variables
 dotenv.config();
 
+let dbConnectionPromise = null;
+const getDatabaseConnection = () => {
+  if (!dbConnectionPromise) {
+    dbConnectionPromise = connectDB();
+  }
+  return dbConnectionPromise;
+};
+
 // Connect to database
 if (!(process.env.VERCEL && !process.env.MONGO_URI)) {
-  connectDB();
+  getDatabaseConnection();
 }
 
 const app = express();
@@ -32,27 +40,17 @@ app.use('/api', async (req, res, next) => {
     });
   }
 
-  // 2. If disconnected, trigger connection
-  if (mongoose.connection.readyState === 0) {
-    try {
-      await connectDB();
-    } catch (err) {
-      return res.status(503).json({
-        success: false,
-        message: 'Database connection failed. Please check your database settings.'
-      });
-    }
-  }
-
-  // 3. If connecting, wait for connection attempt to complete (either connected or error)
-  if (mongoose.connection.readyState === 2) {
-    await new Promise((resolve) => {
-      mongoose.connection.once('connected', resolve);
-      mongoose.connection.once('error', resolve);
+  // 2. Await connection and seeding completion
+  try {
+    await getDatabaseConnection();
+  } catch (err) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database connection failed. Please check your database settings.'
     });
   }
 
-  // 4. Double check if connection is active
+  // 3. Double check if connection is active
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({
       success: false,
