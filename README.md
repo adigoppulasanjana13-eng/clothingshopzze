@@ -18,8 +18,10 @@ BLUSH & BLOOM is a complete shopping flow: browse by generational collection (Li
 
 <table>
 <tr>
-<td align="center"><b>Landing Page</b><br><img width="220" src="assets/screenshots/landing.png"></td>
-<td align="center"><b>Checkout</b><br><img width="220" src="assets/screenshots/checkout.png"></td>
+<td align="center"><b>Landing Page</b><br><img width="300" height="500" alt="landing page" src="https://github.com/user-attachments/assets/89defe23-b419-485e-a279-c6f4b7bb484b" />
+</td>
+<td align="center"><b>Checkout</b><br><img width="300" height="500" alt="checkout" src="https://github.com/user-attachments/assets/7ea99418-d56a-46ea-bedf-1436d98808f4" />
+</td>
 </tr>
 </table>
 
