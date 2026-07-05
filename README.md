@@ -6,7 +6,7 @@ Built using the MERN stack and optimized for serverless hosting on Vercel, it fe
 ---
 
 ## 🛠️ Technology Stack
-- **Frontend**: Vanilla HTML5, CSS3 (Premium typography, animations, responsive design), Vanilla JavaScript,Mainly React
+- **Frontend**: Vanilla HTML5, CSS3 (Premium typography, animations, responsive design), Vanilla JavaScript,Mainly React.js
 - **Backend**: Node.js, Express.js.
 - **Database**: MongoDB (Mongoose ODM).
 - **Deployment**: Vercel Serverless Functions.
