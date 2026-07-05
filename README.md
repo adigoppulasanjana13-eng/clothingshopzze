@@ -1,82 +1,77 @@
-# BLUSH & BLOOM | Editorial Fashion E-Store
+# BLUSH & BLOOM | ShopEZ
 
-BLUSH & BLOOM (Shopez) is a premium, multi-generational editorial clothing e-commerce web application. The platform offers curated sustainable fashion crafted from premium organic fabrics (e.g., flax linen, Kashmiri pashmina, organic cotton) customized for various generational age groups. 
+A full-stack fashion e-commerce platform with generational product collections, cart, checkout, coupons, and order tracking — built end-to-end and deployed to production.
 
-Built using the MERN stack and optimized for serverless hosting on Vercel, it features a complete shopping flow from product discovery to checkout.
----
+## The Problem
 
-## 🛠️ Technology Stack
-- **Frontend**: Vanilla HTML5, CSS3 (Premium typography, animations, responsive design), Vanilla JavaScript,Mainly React.js
-- **Backend**: Node.js, Express.js.
-- **Database**: MongoDB (Mongoose ODM).
-- **Deployment**: Vercel Serverless Functions.
+Most student e-commerce projects stop at a product listing page. Real e-commerce needs a working cart, checkout, order history, stock management, and an admin side — the parts that actually make a store functional, not just a catalog demo.
 
----
+## The Solution
 
-## ✨ Key Features
-- **Generational Collections**: Dynamically filter products by age groups (Little Blooms 0-6Y, Tween Style 7-12Y, Teen Edit 13-17Y, Young Women 18-25Y, Modern & Professional 26-35Y, Elegant Sophistication 36-50Y, Timeless Grace 50Y+).
-- **Shopping Cart & Checkout**: Add/remove products, adjust quantities, select sizes, configure shipping address, and choose a payment mode (COD or Sandbox Online Card/UPI).
-- **Discount Coupons**: Apply promotional code rules (e.g. `WELCOME10` for 10% off, `BLOOM20` for 20% off, `FESTIVE300` for flat ₹300 off).
-- **Secure Order Management**: Order placements deduct product stock dynamically and validation logic ensures items and images sync safely with database constraints.
-- **Personalized Profile Dashboard**: View order history, track order statuses (Placed, Processing, Shipped, Delivered), and manage saved shipping addresses.
-- **Role-Based Access Control**: Separate admin permissions and client accounts.
-- **Serverless Database Stability**: Uses lazy connection handling inside the API middleware to prevent serverless database exhaustion and cold start timeouts.
+BLUSH & BLOOM is a complete shopping flow: browse by generational collection (Little Blooms to Timeless Grace), add to cart, apply coupons, check out with COD or sandbox online payment, and track order status from a personal dashboard. An admin role manages the catalog and stock separately from customer accounts.
 
----
+## Live Demo
 
-## 🗄️ Database Seeding
-The application is pre-seeded with sample data to showcase the editorial catalog. The seed script populates:
-- **Admin account**: `admin@blushandbloom.com` / `adminpassword123`
-- **Default user account**: `sathwika@example.com` / `userpassword123`
-- **Coupons**: `WELCOME10`, `BLOOM20`, `FESTIVE300`
-- **30 Premium Products**: With descriptions, fabrics, sizes, stock, price details, and featured reviews.
+👉 [shopez-lovat.vercel.app](https://shopez-lovat.vercel.app)
 
-To manually seed the database (local or remote):
+## Screenshots
+
+<table>
+<tr>
+<td align="center"><b>Landing Page</b><br><img width="220" src="assets/screenshots/landing.png"></td>
+<td align="center"><b>Checkout</b><br><img width="220" src="assets/screenshots/checkout.png"></td>
+</tr>
+</table>
+
+## Key Features
+
+- **Generational collections** — products filtered by age group, from Little Blooms (0-6) to Timeless Grace (50+)
+- **Cart & checkout** — quantity/size selection, address entry, COD or sandbox card/UPI payment
+- **Coupons** — promo code logic (percentage and flat-amount discounts)
+- **Order management** — stock deducts on purchase; customers track status (Placed → Processing → Shipped → Delivered)
+- **Role-based access** — separate admin and customer permissions
+- **Serverless-safe database handling** — lazy MongoDB connection inside API middleware to avoid cold-start/connection exhaustion issues on Vercel
+
+## Tech Stack
+
+**Frontend:** HTML5, CSS3, Vanilla JavaScript
+**Backend:** Node.js, Express.js
+**Database:** MongoDB (Mongoose)
+**Deployment:** Vercel (serverless functions)
+
+## Run It Locally
+
 ```bash
-MONGO_URI="your_mongodb_connection_string" node backend/seed.js
+git clone https://github.com/adigoppulasanjana13-eng/shopez-ecommerce.git
+cd shopez-ecommerce
+npm install
+cd backend && npm install && cd ..
 ```
 
----
-
-## ⚙️ Environment Variables
-Create a `.env` file in the `backend/` directory or add these to your Vercel project environment variables settings:
+Create `backend/.env`:
 ```env
 PORT=3000
 MONGO_URI=mongodb+srv://...
 JWT_SECRET=your_jwt_signature_secret
 JWT_EXPIRES_IN=7d
-NODE_ENV=production
+NODE_ENV=development
 ```
 
----
-
-## 💻 Local Development Setup
-1. **Clone the repository** and navigate to the project directory.
-2. **Install Root dependencies**:
-   ```bash
-   npm install
-   ```
-3. **Install Backend dependencies**:
-   ```bash
-   cd backend && npm install && cd ..
-   ```
-4. **Configure your local Environment Variables** in `backend/.env`.
-5. **Start local server**:
-   ```bash
-   node backend/server.js
-   ```
-   Open your browser to `http://localhost:3000` to interact with the application.
-
----
-
-## 📦 Deployment on Vercel
-Deploying to Vercel is streamlined with the root `vercel.json` and the serverless entrypoint `api/index.js` which routes all backend logic dynamically.
-
-Deploy commands:
+Seed sample data (30 products, coupons):
 ```bash
-# Preview deployment
-npx vercel --yes
+MONGO_URI="your_connection_string" node backend/seed.js
+```
 
-# Production deployment
+Start the server:
+```bash
+node backend/server.js
+```
+Open `http://localhost:3000`.
+
+## Deployment
+
+Deployed on Vercel using the root `vercel.json` and a serverless entrypoint at `api/index.js` that routes backend logic dynamically.
+
+```bash
 npx vercel --prod --yes
 ```
